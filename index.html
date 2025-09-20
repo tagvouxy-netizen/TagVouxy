@@ -3,379 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Meu Site</title>
-    <!-- Carrega a biblioteca Tailwind CSS para estilização -->
+    <title>Voxy Hub</title>
+    <!-- Inclui a biblioteca Tailwind CSS para estilização rápida e responsiva -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Adiciona os ícones do Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #1e1e1e;
+            background-color: #2c2c2c; /* Fundo cinza neutro */
+            color: #e5e5e5;
         }
-        .login-container {
-            background: #282828;
+        .text-purple-600 {
+            color: #9333ea;
         }
-        .input-field {
-            background-color: #333333;
-            border-color: #555555;
-            color: white;
+        .bg-purple-600 {
+            background-color: #9333ea;
         }
-        .input-field:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #aaaaaa;
-            border-color: transparent;
+        .hover\:bg-purple-700:hover {
+            background-color: #7e22ce;
         }
-        .button-gradient {
-            background-image: linear-gradient(to right, #60a5fa, #1d4ed8);
-            background-size: 200% auto;
-            animation: pulse-gradient 2s infinite alternate;
+        .border-t-purple-600 {
+            border-top-color: #9333ea;
         }
-        @keyframes pulse-gradient {
-            0% {
-                background-position: left;
-            }
-            100% {
-                background-position: right;
-            }
+        .hover\:border-purple-600:hover {
+            border-color: #9333ea;
         }
-        /* Estilo para a animação de carregamento */
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+
+        /* Animação de degradê estilo slider, mais suave */
+        @keyframes slide-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .btn-slider-animation {
+            background-image: linear-gradient(to right, #7e22ce, #9333ea, #7e22ce);
+            background-size: 200% 100%;
+            animation: slide-gradient 8s ease-in-out infinite; /* Duração e timing ajustados para suavidade */
         }
-        .user-details-panel {
-            top: 60px;
-            right: 16px;
+        /* Pausa a animação ao passar o mouse */
+        .btn-slider-animation:hover {
+            animation-play-state: paused;
+        }
+
+        /* Animação para o ícone SVG */
+        @keyframes icon-color-slide {
+            0% { stroke: #9333ea; }
+            50% { stroke: #7e22ce; }
+            100% { stroke: #9333ea; }
+        }
+        .icon-animation {
+            animation: icon-color-slide 8s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="text-white flex items-center justify-center min-h-screen p-4">
-
-    <!-- Container principal que alterna entre registro e login -->
-    <div id="main-content" class="login-container p-8 rounded-2xl shadow-xl max-w-md w-full">
-        <!-- Seção de Registro (visível por padrão) -->
-        <div id="register-panel">
-            <h1 class="text-3xl font-bold text-center text-white mb-6 flex items-center justify-center">
-                <i class="fa-solid fa-lock text-white mr-3"></i>
-                Registrar-se
-            </h1>
-            
-            <!-- Formulário de registro -->
-            <form id="registerForm" class="space-y-4">
-                <!-- Campo de nome -->
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-400">Nome</label>
-                    <input type="text" id="name" name="name" required 
-                           class="mt-1 block w-full px-4 py-2 rounded-lg transition-colors duration-300 input-field"
-                           placeholder="Seu nome">
-                </div>
-
-                <!-- Campo de e-mail -->
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-400">E-mail</label>
-                    <input type="email" id="email" name="email" required 
-                           class="mt-1 block w-full px-4 py-2 rounded-lg transition-colors duration-300 input-field"
-                           placeholder="@gmail.com">
-                </div>
-
-                <!-- Campo de senha -->
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-400">Senha</label>
-                    <input type="password" id="password" name="password" required 
-                           class="mt-1 block w-full px-4 py-2 rounded-lg transition-colors duration-300 input-field"
-                           placeholder="••••••••">
-                </div>
-
-                <!-- Campo de confirmação de senha -->
-                <div>
-                    <label for="confirm-password" class="block text-sm font-medium text-gray-400">Confirmar Senha</label>
-                    <input type="password" id="confirm-password" name="confirm-password" required 
-                           class="mt-1 block w-full px-4 py-2 rounded-lg transition-colors duration-300 input-field"
-                           placeholder="••••••••">
-                </div>
-
-                <!-- Botão de submissão -->
-                <button type="submit" 
-                        class="w-full text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 transform hover:scale-105 button-gradient">
-                    Registrar
-                </button>
-            </form>
-            
-            <!-- Link para a tela de login -->
-            <p class="text-center text-sm text-gray-400 mt-4">
-                Já tem uma conta? 
-                <a href="#" id="show-login" class="text-blue-400 hover:underline">Login</a>
-            </p>
-        </div>
-
-        <!-- Seção de Login (invisível por padrão) -->
-        <div id="login-panel" class="hidden">
-            <h1 class="text-3xl font-bold text-center text-white mb-6 flex items-center justify-center">
-                <i class="fa-solid fa-lock text-white mr-3"></i>
-                Login
-            </h1>
-            
-            <!-- Formulário de login -->
-            <form id="loginForm" class="space-y-4">
-                <!-- Campo de e-mail -->
-                <div>
-                    <label for="login-email" class="block text-sm font-medium text-gray-400">E-mail</label>
-                    <input type="email" id="login-email" name="email" required 
-                           class="mt-1 block w-full px-4 py-2 rounded-lg transition-colors duration-300 input-field"
-                           placeholder="@gmail.com">
-                </div>
-
-                <!-- Campo de senha -->
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-gray-400">Senha</label>
-                    <input type="password" id="login-password" name="password" required 
-                           class="mt-1 block w-full px-4 py-2 rounded-lg transition-colors duration-300 input-field"
-                           placeholder="••••••••">
-                </div>
-
-                <!-- Botão de submissão -->
-                <button type="submit" 
-                        class="w-full text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 transform hover:scale-105 button-gradient">
-                    Entrar
-                </button>
-            </form>
-
-            <!-- Link para a tela de registro -->
-            <p class="text-center text-sm text-gray-400 mt-4">
-                Não tem uma conta? 
-                <a href="#" id="show-register" class="text-blue-400 hover:underline">Registrar-se</a>
-            </p>
-        </div>
-        
-        <!-- Mensagem de feedback (compartilhada entre os formulários) -->
-        <div id="messageBox" class="mt-4 p-3 rounded-lg text-center hidden">
-            <p id="messageText"></p>
-        </div>
-        
-        <!-- Painel de carregamento (invisível por padrão) -->
-        <div id="loading-panel" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-2xl hidden">
-            <div class="loading-spinner"></div>
-        </div>
-    </div>
-
-    <!-- Nova tela, visível após login/registro -->
-    <div id="user-dashboard" class="hidden absolute inset-0 flex flex-col items-center pt-8" style="background: #282828;">
-        <!-- Barra de navegação com pesquisa e botão de configurações -->
-        <div class="w-full max-w-2xl flex items-center justify-between px-4 sm:px-6 lg:px-8">
-            <!-- Barra de pesquisa -->
-            <div class="flex-grow mr-4">
-                <input type="text" placeholder="Pesquisar..." class="w-full px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
+<body class="flex flex-col items-center min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl w-full">
+        <!-- Seção do Cabeçalho e Pesquisa -->
+        <header class="flex flex-col items-center justify-center text-center space-y-4 mb-10 mt-8">
+            <div class="flex items-center space-x-4 text-purple-600">
+                <!-- Ícone SVG de Cobra para um visual mais profissional -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 md:w-16 md:h-16 icon-animation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <h1 class="text-4xl md:text-5xl font-light text-white tracking-wide">
+                    Voxy Hub
+                </h1>
             </div>
-            <!-- Botão de configurações e ícone de usuário -->
-            <div class="flex items-center space-x-4">
-                <button class="text-gray-400 hover:text-white transition-colors duration-300">
-                    <i class="fas fa-cog text-2xl"></i>
+
+            <!-- Abas de navegação -->
+            <div class="flex justify-center items-center mt-4 space-x-4">
+                <button class="py-2 px-4 rounded-full text-sm font-medium text-white btn-slider-animation">
+                    Scripts
                 </button>
-                <button id="user-icon" class="text-gray-400 hover:text-white transition-colors duration-300">
-                    <i class="fas fa-user-circle text-2xl"></i>
+                <button class="py-2 px-4 rounded-full text-sm font-medium text-gray-400 hover:text-purple-600 transition duration-300">
+                    Executores
+                </button>
+                <button class="py-2 px-4 rounded-full text-sm font-medium text-gray-400 hover:text-purple-600 transition duration-300">
+                    Tutoriais
                 </button>
             </div>
-        </div>
-        <!-- Mensagem de boas-vindas -->
-        <p id="welcome-message" class="text-lg text-gray-300 mt-8"></p>
-        <!-- Painel de detalhes do usuário (escondido por padrão) -->
-        <div id="user-details-panel" class="absolute user-details-panel w-64 bg-gray-800 rounded-lg shadow-lg p-4 transition-all duration-300 hidden">
-            <h3 class="text-lg font-bold mb-2">Detalhes da Conta</h3>
-            <p class="text-sm">Nome: <span id="user-name"></span></p>
-            <p class="text-sm">E-mail: <span id="user-email"></span></p>
-            <p class="text-sm">Senha: <span id="user-password"></span></p>
-            <button id="logout-button" class="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">Sair</button>
-        </div>
+        </header>
+
+        <!-- Seção de Conteúdo para os Scripts -->
+        <main class="w-full mt-10 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card de Vídeo 1 (Exemplo) -->
+                <div class="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <!-- Placeholder de miniatura de vídeo -->
+                    <div class="w-full h-40 bg-gray-700 rounded-md mb-3 animate-pulse"></div>
+                    <!-- Placeholder para título e informações -->
+                    <div class="h-4 bg-gray-600 rounded mb-2 w-3/4 animate-pulse"></div>
+                    <div class="h-3 bg-gray-600 rounded w-1/2 animate-pulse"></div>
+                </div>
+                <!-- Card de Vídeo 2 (Exemplo) -->
+                <div class="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <!-- Placeholder de miniatura de vídeo -->
+                    <div class="w-full h-40 bg-gray-700 rounded-md mb-3 animate-pulse"></div>
+                    <!-- Placeholder para título e informações -->
+                    <div class="h-4 bg-gray-600 rounded mb-2 w-3/4 animate-pulse"></div>
+                    <div class="h-3 bg-gray-600 rounded w-1/2 animate-pulse"></div>
+                </div>
+                <!-- Card de Vídeo 3 (Exemplo) -->
+                <div class="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <!-- Placeholder de miniatura de vídeo -->
+                    <div class="w-full h-40 bg-gray-700 rounded-md mb-3 animate-pulse"></div>
+                    <!-- Placeholder para título e informações -->
+                    <div class="h-4 bg-gray-600 rounded mb-2 w-3/4 animate-pulse"></div>
+                    <div class="h-3 bg-gray-600 rounded w-1/2 animate-pulse"></div>
+                </div>
+            </div>
+        </main>
     </div>
-
-    <script>
-        // Obtém os elementos dos painéis e links
-        const mainContent = document.getElementById('main-content');
-        const registerPanel = document.getElementById('register-panel');
-        const loginPanel = document.getElementById('login-panel');
-        const showLoginLink = document.getElementById('show-login');
-        const showRegisterLink = document.getElementById('show-register');
-        const loadingPanel = document.getElementById('loading-panel');
-        const userDashboard = document.getElementById('user-dashboard');
-        
-        // Obtém os elementos do formulário de registro e da caixa de mensagem
-        const registerForm = document.getElementById('registerForm');
-        const loginForm = document.getElementById('loginForm');
-        const messageBox = document.getElementById('messageBox');
-        const messageText = document.getElementById('messageText');
-
-        // Obtém os elementos do painel de usuário
-        const userIcon = document.getElementById('user-icon');
-        const userDetailsPanel = document.getElementById('user-details-panel');
-        const userNameSpan = document.getElementById('user-name');
-        const userEmailSpan = document.getElementById('user-email');
-        const userPasswordSpan = document.getElementById('user-password');
-        const logoutButton = document.getElementById('logout-button');
-        const welcomeMessage = document.getElementById('welcome-message');
-
-        // Simula um banco de dados de usuários registrados
-        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [
-            { name: 'Joao', email: 'joao@gmail.com', password: 'senha123' },
-            { name: 'Maria', email: 'maria@gmail.com', password: 'senha456' },
-            { name: 'Pedro', email: 'pedro@gmail.com', password: 'senha789' }
-        ];
-
-        // Função para verificar o status de login ao carregar a página
-        function checkLoginStatus() {
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
-                showDashboard();
-            }
-        }
-
-        // Adiciona um ouvinte de evento para a submissão do formulário de registro
-        registerForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            showLoading();
-
-            setTimeout(() => {
-                // Obtém os valores dos campos
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-
-                // Lógica de validação: verifica se o nome ou e-mail já foi registrado
-                if (registeredUsers.some(user => user.name === name)) {
-                    showMessage('Este nome de usuário já existe.', 'bg-red-600');
-                    hideLoading();
-                    return;
-                }
-
-                if (registeredUsers.some(user => user.email === email)) {
-                    showMessage('Este e-mail já está registrado.', 'bg-red-600');
-                    hideLoading();
-                    return;
-                }
-
-                // Lógica de validação: verifica se as senhas coincidem
-                if (password !== confirmPassword) {
-                    showMessage('As senhas não coincidem.', 'bg-red-600');
-                    hideLoading();
-                    return;
-                }
-
-                // Lógica de validação: verifica se o e-mail é @gmail.com
-                if (!email.endsWith('@gmail.com')) {
-                    showMessage('Apenas e-mails do Gmail são permitidos.', 'bg-red-600');
-                    hideLoading();
-                    return;
-                }
-
-                // Adiciona o novo usuário ao "banco de dados" simulado
-                const newUser = { name, email, password };
-                registeredUsers.push(newUser);
-                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-                localStorage.setItem('currentUser', JSON.stringify(newUser)); // Salva o usuário logado
-                showMessage('Registro efetuado com sucesso!', 'bg-green-600');
-                hideLoading();
-                showDashboard();
-            }, 1000); // Simula um tempo de carregamento de 1 segundo
-        });
-
-        // Adiciona um ouvinte de evento para a submissão do formulário de login
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            showLoading();
-
-            setTimeout(() => {
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-
-                // Verifica se o e-mail e a senha correspondem a um usuário registrado
-                const user = registeredUsers.find(user => user.email === email && user.password === password);
-                
-                if (user) {
-                    localStorage.setItem('currentUser', JSON.stringify(user)); // Salva o usuário logado
-                    showMessage('Login efetuado com sucesso!', 'bg-green-600');
-                    showDashboard();
-                } else {
-                    showMessage('E-mail ou senha incorretos.', 'bg-red-600');
-                }
-                hideLoading();
-            }, 1000); // Simula um tempo de carregamento de 1 segundo
-        });
-
-        // Função para exibir a mensagem na caixa de feedback
-        function showMessage(message, bgColor) {
-            messageBox.classList.remove('hidden', 'bg-red-600', 'bg-green-600');
-            messageBox.classList.add(bgColor);
-            messageText.textContent = message;
-            
-            // Oculta a mensagem após 3 segundos
-            setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 3000);
-        }
-
-        // Funções para mostrar e esconder o painel de carregamento
-        function showLoading() {
-            loadingPanel.classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            loadingPanel.classList.add('hidden');
-        }
-
-        // Função para mostrar a nova tela do site e esconder o formulário
-        function showDashboard() {
-            mainContent.classList.add('hidden');
-            userDashboard.classList.remove('hidden');
-            document.body.style.background = '#282828';
-            updateUserDetails();
-        }
-
-        // Funções para alternar entre os painéis de registro e login
-        showLoginLink.addEventListener('click', function(event) {
-            event.preventDefault();
-            registerPanel.classList.add('hidden');
-            loginPanel.classList.remove('hidden');
-        });
-
-        showRegisterLink.addEventListener('click', function(event) {
-            event.preventDefault();
-            loginPanel.classList.add('hidden');
-            registerPanel.classList.remove('hidden');
-        });
-
-        // Evento para mostrar/esconder o painel de detalhes do usuário
-        userIcon.addEventListener('click', () => {
-            userDetailsPanel.classList.toggle('hidden');
-        });
-
-        // Função para atualizar os detalhes do usuário no painel
-        function updateUserDetails() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (currentUser) {
-                userNameSpan.textContent = currentUser.name;
-                userEmailSpan.textContent = currentUser.email;
-                userPasswordSpan.textContent = currentUser.password;
-                welcomeMessage.textContent = `Bem-vindo(a), ${currentUser.name}!`;
-            }
-        }
-
-        // Evento de logout
-        logoutButton.addEventListener('click', () => {
-            localStorage.removeItem('currentUser'); // Remove o usuário logado
-            window.location.reload(); // Recarrega a página para voltar à tela de login/registro
-        });
-
-        // Verifica o status de login ao carregar a página
-        window.onload = checkLoginStatus;
-    </script>
 </body>
 </html>
