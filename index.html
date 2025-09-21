@@ -3,153 +3,361 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxy Hub</title>
-    <!-- Inclui a biblioteca Tailwind CSS para estilização rápida e responsiva -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Voxy Hub - Autenticação</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #222222;
+            --text-color: #ffffff;
+            --placeholder-color: #888888;
+            --primary-color: #a020f0;
+            --primary-hover-color: #8a1be6;
+            --link-color: #d156ff;
+            --link-hover-color: #b041e1;
+            --border-color: #444444;
+            --focus-glow: 0 0 10px var(--primary-color);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #2c2c2c; /* Fundo cinza neutro */
-            color: #e5e5e5;
-        }
-        .text-purple-600 {
-            color: #9333ea;
-        }
-        .bg-purple-600 {
-            background-color: #9333ea;
-        }
-        .hover\:bg-purple-700:hover {
-            background-color: #7e22ce;
-        }
-        .border-t-purple-600 {
-            border-top-color: #9333ea;
-        }
-        .hover\:border-purple-600:hover {
-            border-color: #9333ea;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-image: url('https://placehold.co/1920x1080/1a1a1a/1a1a1a');
+            background-size: cover;
+            background-position: center;
         }
 
-        /* Animação de degradê estilo slider, mais suave */
-        @keyframes slide-gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .btn-slider-animation {
-            background-image: linear-gradient(to right, #7e22ce, #9333ea, #7e22ce);
-            background-size: 200% 100%;
-            animation: slide-gradient 8s ease-in-out infinite; /* Duração e timing ajustados para suavidade */
-        }
-        /* Pausa a animação ao passar o mouse */
-        .btn-slider-animation:hover {
-            animation-play-state: paused;
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
         }
 
-        /* Animação para o ícone SVG */
-        @keyframes icon-color-slide {
-            0% { stroke: #9333ea; }
-            50% { stroke: #7e22ce; }
-            100% { stroke: #9333ea; }
+        .auth-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
         }
-        .icon-animation {
-            animation: icon-color-slide 8s ease-in-out infinite;
+
+        .lock-icon {
+            font-size: 40px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--placeholder-color);
+            transition: color 0.2s ease-in-out;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            background-color: #333333;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         
-        /* Cor dos cards de conteúdo */
-        .bg-darker-grey {
-            background-color: #1a1a1a;
+        .input-container:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: var(--focus-glow);
         }
 
-        /* Nova animação de brilho para o status "Down" */
-        @keyframes pulse-glow {
-            0%, 100% {
-                box-shadow: 0 0 0px rgba(220, 38, 38, 0); /* Sombra transparente */
-            }
-            50% {
-                box-shadow: 0 0 6px 1px rgba(220, 38, 38, 0.5); /* Sombra mais sutil */
-            }
+        .form-group input {
+            flex-grow: 1;
+            padding: 15px 20px;
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
         }
-        .down-animation {
-            background-color: #dc2626; /* Cor base */
-            animation: pulse-glow 4s ease-in-out infinite; /* Animação mais longa e suave */
+
+        .form-group input:focus + label {
+            color: var(--primary-color);
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(160, 32, 240, 0.4);
+        }
+
+        .auth-button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(160, 32, 240, 0.6);
+        }
+
+        .switch-link {
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .switch-link a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .switch-link a:hover {
+            color: var(--link-hover-color);
+            text-decoration: underline;
+        }
+
+        .password-toggle {
+            padding-right: 15px;
+            cursor: pointer;
+            color: var(--placeholder-color);
+            transition: color 0.3s;
         }
         
-        /* Estilo da fonte Minecraft para o título */
-        .font-minecraft {
-            font-family: 'Press Start 2P', cursive;
+        .password-toggle:hover {
+            color: var(--text-color);
+        }
+
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            font-size: 16px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .message-box.error {
+            background-color: #d9534f;
+        }
+
+        .message-box.success {
+            background-color: #5cb85c;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body class="flex flex-col items-center min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-4xl w-full">
-        <!-- Seção do Cabeçalho e Pesquisa -->
-        <header class="flex flex-col items-center justify-center text-center space-y-4 mb-10 mt-8">
-            <!-- Abas de navegação -->
-            <div class="flex justify-center items-center mt-4 space-x-4">
-                <button class="py-2 px-4 rounded-full text-sm font-medium text-white btn-slider-animation">
-                    Scripts
-                </button>
-                <button class="py-2 px-4 rounded-full text-sm font-medium text-gray-400 hover:text-purple-600 transition duration-300">
-                    Executores
-                </button>
-                <button class="py-2 px-4 rounded-full text-sm font-medium text-gray-400 hover:text-purple-600 transition duration-300">
-                    Tutoriais
-                </button>
-            </div>
-        </header>
-
-        <!-- Seção de Conteúdo para os Scripts -->
-        <main class="w-full mt-10 max-w-4xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Card de Conteúdo - Exemplo com imagem e botão -->
-                <div class="bg-darker-grey p-4 rounded-lg shadow-lg">
-                    <img src="https://tr.rbxcdn.com/180DAY-88f668e4910b8c0f223c7cc5905898f0/768/432/Image/Webp/noFilter" alt="Velas Mortas" class="w-full h-40 object-cover rounded-md mb-3">
-                    <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-lg font-semibold text-white">Velas Mortas</h2>
-                        <!-- Adição do Status com fundo vermelho e animação -->
-                        <div class="flex items-center">
-                            <span class="text-gray-400 text-sm">Status:</span>
-                            <span class="ml-1 px-2 py-1 text-sm text-white font-bold rounded-full down-animation">
-                                <span>Down</span>
-                            </span>
-                        </div>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <i class="fas fa-lock lock-icon"></i>
+            <h1 class="header-title" id="formTitle">Registrar-se</h1>
+        </div>
+        
+        <div id="registerFormContainer">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">*Como irão te chamar?</label>
+                    <div class="input-container">
+                        <input type="text" id="regUsername" name="username" required>
                     </div>
-                    <button class="w-full py-2 text-white rounded-md btn-slider-animation transition duration-300 flex items-center justify-center">
-                        <span>Ver Detalhes</span>
-                        <svg class="ml-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </button>
                 </div>
-                <!-- Card de Vídeo 2 (Exemplo) -->
-                <div class="bg-darker-grey p-4 rounded-lg shadow-lg">
-                    <!-- Placeholder de miniatura de vídeo -->
-                    <div class="w-full h-40 bg-gray-700 rounded-md mb-3 animate-pulse"></div>
-                    <!-- Placeholder para título e informações -->
-                    <div class="h-4 bg-gray-600 rounded mb-2 w-3/4 animate-pulse"></div>
-                    <div class="h-3 bg-gray-600 rounded w-1/2 animate-pulse"></div>
+                <div class="form-group">
+                    <label for="email">*@gmail.com</label>
+                    <div class="input-container">
+                        <input type="email" id="regEmail" name="email" required>
+                    </div>
                 </div>
-                <!-- Card de Vídeo 3 (Exemplo) -->
-                <div class="bg-darker-grey p-4 rounded-lg shadow-lg">
-                    <!-- Placeholder de miniatura de vídeo -->
-                    <div class="w-full h-40 bg-gray-700 rounded-md mb-3 animate-pulse"></div>
-                    <!-- Placeholder para título e informações -->
-                    <div class="h-4 bg-gray-600 rounded mb-2 w-3/4 animate-pulse"></div>
-                    <div class="h-3 bg-gray-600 rounded w-1/2 animate-pulse"></div>
+                <div class="form-group">
+                    <label for="password">*Crie uma senha.</label>
+                    <div class="input-container">
+                        <input type="password" id="regPassword" name="password" required>
+                        <i class="fas fa-eye-slash password-toggle" id="regTogglePassword"></i>
+                    </div>
                 </div>
-                <!-- Card de Vídeo 4 (Novo) -->
-                <div class="bg-darker-grey p-4 rounded-lg shadow-lg">
-                    <!-- Placeholder de miniatura de vídeo -->
-                    <div class="w-full h-40 bg-gray-700 rounded-md mb-3 animate-pulse"></div>
-                    <!-- Placeholder para título e informações -->
-                    <div class="h-4 bg-gray-600 rounded mb-2 w-3/4 animate-pulse"></div>
-                    <div class="h-3 bg-gray-600 rounded w-1/2 animate-pulse"></div>
+                <button type="submit" class="auth-button">Registrar</button>
+            </form>
+            <p class="switch-link">Já tem uma conta? <a id="showLoginLink">Login</a></p>
+        </div>
+        
+        <div id="loginFormContainer" style="display: none;">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">*Seu nome.</label>
+                    <div class="input-container">
+                        <input type="text" id="logUsername" name="username" required>
+                    </div>
                 </div>
-            </div>
-        </main>
+                <div class="form-group">
+                    <label for="password">*Sua senha.</label>
+                    <div class="input-container">
+                        <input type="password" id="logPassword" name="password" required>
+                        <i class="fas fa-eye-slash password-toggle" id="logTogglePassword"></i>
+                    </div>
+                </div>
+                <button type="submit" class="auth-button">Login</button>
+            </form>
+            <p class="switch-link">Não tem uma conta? <a id="showRegisterLink">Registrar</a></p>
+        </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const registerFormContainer = document.getElementById('registerFormContainer');
+            const loginFormContainer = document.getElementById('loginFormContainer');
+            const formTitle = document.getElementById('formTitle');
+            const showLoginLink = document.getElementById('showLoginLink');
+            const showRegisterLink = document.getElementById('showRegisterLink');
+
+            const regForm = document.getElementById('registerForm');
+            const logForm = document.getElementById('loginForm');
+
+            // Lógica para alternar a exibição dos formulários
+            showLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerFormContainer.style.display = 'none';
+                loginFormContainer.style.display = 'block';
+                formTitle.textContent = 'Login';
+            });
+
+            showRegisterLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginFormContainer.style.display = 'none';
+                registerFormContainer.style.display = 'block';
+                formTitle.textContent = 'Registrar-se';
+            });
+
+            // Lógica para alternar a visibilidade das senhas nos dois formulários
+            const togglePassword = (input, icon) => {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            };
+
+            document.getElementById('regTogglePassword').addEventListener('click', () => {
+                const input = document.getElementById('regPassword');
+                const icon = document.getElementById('regTogglePassword');
+                togglePassword(input, icon);
+            });
+            document.getElementById('logTogglePassword').addEventListener('click', () => {
+                const input = document.getElementById('logPassword');
+                const icon = document.getElementById('logTogglePassword');
+                togglePassword(input, icon);
+            });
+
+            // Lógica de submissão do formulário de Registro
+            regForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('regUsername').value;
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+
+                if (!email.endsWith('@gmail.com')) {
+                    showMessage('O e-mail deve ser um endereço do Gmail (@gmail.com).', 'error');
+                    return;
+                }
+
+                if (username && email && password) {
+                    console.log('Dados do formulário de registro válidos:');
+                    console.log('Usuário:', username);
+                    console.log('Email:', email);
+                    console.log('Senha:', password);
+                    showMessage('Registro bem-sucedido!', 'success');
+                } else {
+                    showMessage('Por favor, preencha todos os campos.', 'error');
+                }
+            });
+
+            // Lógica de submissão do formulário de Login
+            logForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('logUsername').value;
+                const password = document.getElementById('logPassword').value;
+
+                if (username && password) {
+                    console.log('Dados do formulário de login válidos:');
+                    console.log('Nome de usuário:', username);
+                    console.log('Senha:', password);
+                    showMessage('Login bem-sucedido!', 'success');
+                } else {
+                    showMessage('Por favor, preencha todos os campos.', 'error');
+                }
+            });
+
+            // Sistema de Mensagens (substituindo alert)
+            function showMessage(message, type) {
+                let messageBox = document.querySelector('.message-box');
+                if (!messageBox) {
+                    messageBox = document.createElement('div');
+                    messageBox.className = 'message-box';
+                    document.body.appendChild(messageBox);
+                }
+                
+                messageBox.textContent = message;
+                messageBox.className = 'message-box ' + type;
+                messageBox.style.display = 'block';
+
+                setTimeout(() => {
+                    messageBox.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
 </body>
 </html>
