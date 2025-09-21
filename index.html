@@ -39,7 +39,7 @@
             background-position: center;
         }
 
-        .auth-container {
+        .auth-container, .home-container {
             width: 100%;
             max-width: 450px;
             padding: 40px;
@@ -203,7 +203,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="auth-container">
+    <div id="authContainer" class="auth-container">
         <div class="auth-header">
             <i class="fas fa-lock lock-icon"></i>
             <h1 class="header-title" id="formTitle">Registrar-se</h1>
@@ -256,13 +256,59 @@
         </div>
     </div>
     
-    <script>
+    <div id="homePageContainer" class="home-container" style="display: none;">
+        <h1>Bem-vindo ao Voxy Hub!</h1>
+        <p>Você fez login com sucesso e agora pode começar a explorar os scripts.</p>
+        <button id="logoutButton" class="auth-button" style="margin-top: 20px;">Sair</button>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Assegura que as variáveis globais do ambiente estão disponíveis
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Inicializa o Firebase, Firestore e Auth
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Define a coleção de usuários
+        const usersCol = collection(db, `artifacts/${appId}/public/data/users`);
+
+        // Função de login anônimo ou com token
+        async function signIn() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Login com token inicial bem-sucedido.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Login anônimo bem-sucedido.");
+                }
+            } catch (error) {
+                console.error("Erro no login:", error);
+            }
+        }
+        
+        // Inicializa o login
+        signIn();
+
+        // Lógica de manipulação de formulários
         document.addEventListener('DOMContentLoaded', () => {
+            const authContainer = document.getElementById('authContainer');
+            const homePageContainer = document.getElementById('homePageContainer');
             const registerFormContainer = document.getElementById('registerFormContainer');
             const loginFormContainer = document.getElementById('loginFormContainer');
             const formTitle = document.getElementById('formTitle');
             const showLoginLink = document.getElementById('showLoginLink');
             const showRegisterLink = document.getElementById('showRegisterLink');
+            const logoutButton = document.getElementById('logoutButton');
 
             const regForm = document.getElementById('registerForm');
             const logForm = document.getElementById('loginForm');
@@ -301,45 +347,6 @@
                 togglePassword(input, icon);
             });
 
-            // Lógica de submissão do formulário de Registro
-            regForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const username = document.getElementById('regUsername').value;
-                const email = document.getElementById('regEmail').value;
-                const password = document.getElementById('regPassword').value;
-
-                if (!email.endsWith('@gmail.com')) {
-                    showMessage('O e-mail deve ser um endereço do Gmail (@gmail.com).', 'error');
-                    return;
-                }
-
-                if (username && email && password) {
-                    console.log('Dados do formulário de registro válidos:');
-                    console.log('Usuário:', username);
-                    console.log('Email:', email);
-                    console.log('Senha:', password);
-                    showMessage('Registro bem-sucedido!', 'success');
-                } else {
-                    showMessage('Por favor, preencha todos os campos.', 'error');
-                }
-            });
-
-            // Lógica de submissão do formulário de Login
-            logForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const username = document.getElementById('logUsername').value;
-                const password = document.getElementById('logPassword').value;
-
-                if (username && password) {
-                    console.log('Dados do formulário de login válidos:');
-                    console.log('Nome de usuário:', username);
-                    console.log('Senha:', password);
-                    showMessage('Login bem-sucedido!', 'success');
-                } else {
-                    showMessage('Por favor, preencha todos os campos.', 'error');
-                }
-            });
-
             // Sistema de Mensagens (substituindo alert)
             function showMessage(message, type) {
                 let messageBox = document.querySelector('.message-box');
@@ -357,6 +364,136 @@
                     messageBox.style.display = 'none';
                 }, 3000);
             }
+
+            // Lista de palavras inadequadas para validação (em minúsculas)
+            const profanityList = [
+                // Português
+                'boceta', 'buceta', 'cuzão', 'cuzao', 'caralho', 'filhodaputa', 'foda', 'merda', 'puta', 'vagabunda',
+                // Inglês
+                'asshole', 'bitch', 'cock', 'cunt', 'dick', 'fuck', 'motherfucker', 'shit', 'whore', 'slut'
+            ];
+
+            // Função para validar o nome de usuário
+            function validateUsername(username) {
+                const lowerUsername = username.toLowerCase();
+                
+                // Verifica se contém pontuação ou espaços
+                if (!/^[a-zA-Z0-9]+$/.test(lowerUsername)) {
+                    return 'O nome de usuário não pode conter espaços, pontuação ou caracteres especiais.';
+                }
+
+                // Verifica se contém palavras inadequadas
+                for (const word of profanityList) {
+                    if (lowerUsername.includes(word)) {
+                        return 'O nome de usuário contém uma palavra inapropriada.';
+                    }
+                }
+
+                return null; // Retorna null se for válido
+            }
+
+            // Lógica de submissão do formulário de Registro
+            regForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('regUsername').value;
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+
+                // Validação do nome de usuário
+                const usernameError = validateUsername(username);
+                if (usernameError) {
+                    showMessage(usernameError, 'error');
+                    return;
+                }
+
+                if (!email.endsWith('@gmail.com')) {
+                    showMessage('O e-mail deve ser um endereço do Gmail (@gmail.com).', 'error');
+                    return;
+                }
+
+                if (username && email && password) {
+                    try {
+                        // Verifica se o nome de usuário ou e-mail já existem
+                        const q = query(usersCol, where("username", "==", username));
+                        const q2 = query(usersCol, where("email", "==", email));
+                        const [querySnapshot, querySnapshot2] = await Promise.all([getDocs(q), getDocs(q2)]);
+
+                        if (!querySnapshot.empty) {
+                            showMessage('Nome de usuário já existe!', 'error');
+                            return;
+                        }
+
+                        if (!querySnapshot2.empty) {
+                            showMessage('E-mail já existe!', 'error');
+                            return;
+                        }
+
+                        // Adiciona o novo usuário ao Firestore
+                        await addDoc(usersCol, {
+                            username: username,
+                            email: email,
+                            password: password // NOTA: Em produção, você deve sempre usar senhas criptografadas.
+                        });
+
+                        showMessage('Registro bem-sucedido!', 'success');
+                        setTimeout(() => {
+                            authContainer.style.display = 'none';
+                            homePageContainer.style.display = 'block';
+                        }, 1500);
+
+                    } catch (error) {
+                        console.error("Erro ao registrar:", error);
+                        showMessage('Erro ao registrar. Por favor, tente novamente.', 'error');
+                    }
+                } else {
+                    showMessage('Por favor, preencha todos os campos.', 'error');
+                }
+            });
+
+            // Lógica de submissão do formulário de Login
+            logForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('logUsername').value;
+                const password = document.getElementById('logPassword').value;
+
+                if (username && password) {
+                    try {
+                        // Busca o usuário no Firestore
+                        const q = query(usersCol, where("username", "==", username), where("password", "==", password));
+                        const querySnapshot = await getDocs(q);
+
+                        if (querySnapshot.empty) {
+                            showMessage('Nome de usuário ou senha incorretos.', 'error');
+                            return;
+                        }
+
+                        console.log('Login bem-sucedido!');
+                        showMessage('Login bem-sucedido!', 'success');
+                        setTimeout(() => {
+                            authContainer.style.display = 'none';
+                            homePageContainer.style.display = 'block';
+                        }, 1500);
+
+                    } catch (error) {
+                        console.error("Erro ao fazer login:", error);
+                        showMessage('Erro ao fazer login. Por favor, tente novamente.', 'error');
+                    }
+                } else {
+                    showMessage('Por favor, preencha todos os campos.', 'error');
+                }
+            });
+
+            // Lógica do botão de Sair
+            logoutButton.addEventListener('click', () => {
+                homePageContainer.style.display = 'none';
+                authContainer.style.display = 'block';
+                // Reseta os formulários para um estado limpo
+                regForm.reset();
+                logForm.reset();
+                formTitle.textContent = 'Registrar-se'; // Volta para a tela de registro
+                registerFormContainer.style.display = 'block';
+                loginFormContainer.style.display = 'none';
+            });
         });
     </script>
 </body>
