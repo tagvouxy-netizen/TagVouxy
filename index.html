@@ -6,9 +6,9 @@
     <title>Voxy Hub - Autenticação</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
 
         :root {
             --bg-color: #1a1a1a;
@@ -24,7 +24,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oswald', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
@@ -39,7 +39,7 @@
             background-position: center;
         }
 
-        .auth-container, .home-container {
+        .auth-container, .dashboard-container {
             width: 100%;
             max-width: 450px;
             padding: 40px;
@@ -47,6 +47,20 @@
             border-radius: 15px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
+        }
+        
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 100%;
+            height: 100vh;
+            padding: 0;
+            background-color: var(--bg-color);
+            border-radius: 0;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            text-align: left;
         }
 
         .auth-header {
@@ -199,6 +213,162 @@
                 transform: translateX(-50%) translateY(0);
             }
         }
+
+        /* Dashboard Styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid #333;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-color);
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-item .fas {
+            font-size: 18px;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+        
+        .nav-item:hover .fas, .nav-item.active .fas {
+            color: var(--primary-color);
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-icon, .toggle-icon {
+            font-size: 24px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .user-icon:hover, .toggle-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .dashboard-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .content-section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 0;
+        }
+        
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #5cb85c;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #5cb85c;
+            border-radius: 50%;
+        }
+
+        .card-footer {
+            padding: 10px 20px 20px;
+        }
+
+        .card-button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .card-button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-1px);
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -256,10 +426,74 @@
         </div>
     </div>
     
-    <div id="homePageContainer" class="home-container" style="display: none;">
-        <h1>Bem-vindo ao Voxy Hub!</h1>
-        <p>Você fez login com sucesso e agora pode começar a explorar os scripts.</p>
-        <button id="logoutButton" class="auth-button" style="margin-top: 20px;">Sair</button>
+    <div id="dashboardContainer" class="dashboard-container" style="display: none;">
+        <!-- Header do Dashboard -->
+        <header class="dashboard-header">
+            <div class="logo">Voxy Hub</div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-code"></i> Scripts
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-shield-alt"></i> Executores
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-video"></i> Tutoriais
+                </a>
+            </nav>
+            <div class="user-controls">
+                <i class="fas fa-user-circle user-icon"></i>
+                <i class="fas fa-moon toggle-icon" id="themeToggle"></i>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal do Dashboard -->
+        <main class="dashboard-content">
+            <h2 class="content-section-title">Scripts</h2>
+            <div class="card-grid">
+                <!-- Exemplo de Card de Script -->
+                <div class="card">
+                    <img src="https://placehold.co/400x250/333333/ffffff?text=Script+Image" alt="Imagem do Script" class="card-image">
+                    <div class="card-body">
+                        <h3 class="card-title">Velas Mortas</h3>
+                        <div class="card-status">
+                            <span class="status-dot"></span>
+                            Working
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="card-button">Ver Detalhes <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                <!-- Outros Cards de Exemplo -->
+                <div class="card">
+                    <img src="https://placehold.co/400x250/333333/ffffff?text=Script+Image+2" alt="Imagem do Script" class="card-image">
+                    <div class="card-body">
+                        <h3 class="card-title">Outro Script</h3>
+                        <div class="card-status">
+                            <span class="status-dot"></span>
+                            Working
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="card-button">Ver Detalhes <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://placehold.co/400x250/333333/ffffff?text=Script+Image+3" alt="Imagem do Script" class="card-image">
+                    <div class="card-body">
+                        <h3 class="card-title">Script Fantástico</h3>
+                        <div class="card-status">
+                            <span class="status-dot"></span>
+                            Working
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="card-button">Ver Detalhes <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <!-- Firebase SDKs -->
@@ -302,13 +536,12 @@
         // Lógica de manipulação de formulários
         document.addEventListener('DOMContentLoaded', () => {
             const authContainer = document.getElementById('authContainer');
-            const homePageContainer = document.getElementById('homePageContainer');
+            const dashboardContainer = document.getElementById('dashboardContainer');
             const registerFormContainer = document.getElementById('registerFormContainer');
             const loginFormContainer = document.getElementById('loginFormContainer');
             const formTitle = document.getElementById('formTitle');
             const showLoginLink = document.getElementById('showLoginLink');
             const showRegisterLink = document.getElementById('showRegisterLink');
-            const logoutButton = document.getElementById('logoutButton');
 
             const regForm = document.getElementById('registerForm');
             const logForm = document.getElementById('loginForm');
@@ -438,7 +671,7 @@
                         showMessage('Registro bem-sucedido!', 'success');
                         setTimeout(() => {
                             authContainer.style.display = 'none';
-                            homePageContainer.style.display = 'block';
+                            dashboardContainer.style.display = 'flex'; // Altera para o novo painel
                         }, 1500);
 
                     } catch (error) {
@@ -471,7 +704,7 @@
                         showMessage('Login bem-sucedido!', 'success');
                         setTimeout(() => {
                             authContainer.style.display = 'none';
-                            homePageContainer.style.display = 'block';
+                            dashboardContainer.style.display = 'flex'; // Altera para o novo painel
                         }, 1500);
 
                     } catch (error) {
@@ -481,18 +714,6 @@
                 } else {
                     showMessage('Por favor, preencha todos os campos.', 'error');
                 }
-            });
-
-            // Lógica do botão de Sair
-            logoutButton.addEventListener('click', () => {
-                homePageContainer.style.display = 'none';
-                authContainer.style.display = 'block';
-                // Reseta os formulários para um estado limpo
-                regForm.reset();
-                logForm.reset();
-                formTitle.textContent = 'Registrar-se'; // Volta para a tela de registro
-                registerFormContainer.style.display = 'block';
-                loginFormContainer.style.display = 'none';
             });
         });
     </script>
