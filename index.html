@@ -1,719 +1,1126 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxy Hub - Autenticação</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <title>Voxy Hub - Sistema de Autenticação</title>
+    <link href="https://unpkg.com/lucide@latest/dist/umd/lucide.js" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
-
-        :root {
-            --bg-color: #1a1a1a;
-            --card-bg: #222222;
-            --text-color: #ffffff;
-            --placeholder-color: #888888;
-            --primary-color: #a020f0;
-            --primary-hover-color: #8a1be6;
-            --link-color: #d156ff;
-            --link-hover-color: #b041e1;
-            --border-color: #444444;
-            --focus-glow: 0 0 10px var(--primary-color);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Oswald', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: linear-gradient(135deg, #2c2c2c 0%, #4a4a4a 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             padding: 20px;
-            box-sizing: border-box;
-            background-image: url('https://placehold.co/1920x1080/1a1a1a/1a1a1a');
-            background-size: cover;
-            background-position: center;
+            color: #333;
         }
 
-        .auth-container, .dashboard-container {
+        .app-container {
+            display: flex;
             width: 100%;
-            max-width: 450px;
-            padding: 40px;
-            background-color: var(--card-bg);
+            max-width: 1200px;
+            height: 700px;
+            background-color: #f5f5f5;
             border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-section {
+            flex: 1;
+            background: linear-gradient(135deg, #8B0000 0%, #FF0000 100%);
+            color: white;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
             text-align: center;
         }
-        
-        /* Dashboard Container */
-        .dashboard-container {
-            max-width: 100%;
-            height: 100vh;
-            padding: 0;
-            background-color: var(--bg-color);
-            border-radius: 0;
-            box-shadow: none;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            text-align: left;
+
+        .brand-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
         }
 
-        .auth-header {
+        .brand-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-logo {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .meteor-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .brand-tagline {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 300px;
+            margin: 0 auto;
+            font-weight: 600;
+        }
+
+        .form-section {
+            flex: 1;
+            padding: 50px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-toggle {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #777;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .toggle-btn.active {
+            color: #FF0000;
+        }
+
+        .toggle-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #FF0000;
+        }
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: #777;
+            text-align: center;
             margin-bottom: 30px;
         }
 
-        .lock-icon {
-            font-size: 40px;
-            color: var(--text-color);
-            margin-bottom: 10px;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-color);
-        }
-
         .form-group {
+            margin-bottom: 20px;
             position: relative;
-            margin-bottom: 25px;
-            text-align: left;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: var(--placeholder-color);
-            transition: color 0.2s ease-in-out;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
         }
 
-        .input-container {
-            display: flex;
-            align-items: center;
-            background-color: #333333;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        .input-container:focus-within {
-            border-color: var(--primary-color);
-            box-shadow: var(--focus-glow);
+        .input-with-icon {
+            position: relative;
         }
 
-        .form-group input {
-            flex-grow: 1;
-            padding: 15px 20px;
-            background-color: transparent;
-            border: none;
-            color: var(--text-color);
-            font-size: 16px;
-            outline: none;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus + label {
-            color: var(--primary-color);
-        }
-
-        .auth-button {
+        .input-with-icon input {
             width: 100%;
-            padding: 15px;
-            background: var(--primary-color);
-            border: none;
-            border-radius: 10px;
-            color: var(--text-color);
-            font-size: 18px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
-            box-shadow: 0 5px 15px rgba(160, 32, 240, 0.4);
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
         }
 
-        .auth-button:hover {
-            background-color: var(--primary-hover-color);
-            transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(160, 32, 240, 0.6);
+        .input-with-icon .icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
         }
 
-        .switch-link {
-            margin-top: 25px;
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+            background-color: white;
+        }
+
+        .input-with-icon input::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .form-group .error {
+            color: #FF0000;
             font-size: 14px;
-            color: var(--text-color);
+            margin-top: 5px;
+            display: none;
         }
 
-        .switch-link a {
-            color: var(--link-color);
-            text-decoration: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: color 0.3s;
+        .form-group.error input {
+            border-color: #FF0000;
+            background-color: #ffe6e6;
         }
 
-        .switch-link a:hover {
-            color: var(--link-hover-color);
-            text-decoration: underline;
+        .form-group.error .error {
+            display: block;
+        }
+
+        .form-group.success input {
+            border-color: #2ecc71;
         }
 
         .password-toggle {
-            padding-right: 15px;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             cursor: pointer;
-            color: var(--placeholder-color);
+            color: #777;
             transition: color 0.3s;
         }
-        
+
         .password-toggle:hover {
-            color: var(--text-color);
+            color: #FF0000;
         }
 
-        .message-box {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: #fff;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            display: none;
-            font-size: 16px;
-            animation: fadeIn 0.5s ease-out;
+        .captcha-container {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #ddd;
         }
 
-        .message-box.error {
-            background-color: #d9534f;
-        }
-
-        .message-box.success {
-            background-color: #5cb85c;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        /* Dashboard Styles */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 40px;
-            background-color: var(--card-bg);
-            border-bottom: 1px solid #333;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .logo {
-            font-family: 'Oswald', sans-serif;
+        .captcha-text {
             font-size: 24px;
             font-weight: bold;
-            color: var(--text-color);
-            letter-spacing: 1px;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            color: #333;
+            background: white;
+            padding: 10px;
+            border-radius: 3px;
+            user-select: none;
         }
 
-        .nav-menu {
-            display: flex;
-            gap: 40px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .nav-item:hover, .nav-item.active {
-            color: var(--primary-color);
-        }
-
-        .nav-item .fas {
-            font-size: 18px;
-            color: var(--text-color);
-            transition: color 0.3s;
-        }
-        
-        .nav-item:hover .fas, .nav-item.active .fas {
-            color: var(--primary-color);
-        }
-
-        .user-controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-icon, .toggle-icon {
-            font-size: 24px;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        
-        .user-icon:hover, .toggle-icon:hover {
-            color: var(--primary-color);
-        }
-
-        .dashboard-content {
-            flex-grow: 1;
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
-
-        .content-section-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .card-image {
+        .captcha-input {
             width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
-        
-        .card-body {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex-grow: 1;
-        }
-        
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-color);
-            margin: 0;
-        }
-        
-        .card-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #5cb85c;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 16px;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #5cb85c;
-            border-radius: 50%;
-        }
-
-        .card-footer {
-            padding: 10px 20px 20px;
-        }
-
-        .card-button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
+        .btn {
+            background: linear-gradient(135deg, #8B0000 0%, #FF0000 100%);
+            color: white;
             border: none;
-            border-radius: 8px;
-            color: var(--text-color);
+            padding: 14px;
+            width: 100%;
+            border-radius: 5px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
         }
-        
-        .card-button:hover {
-            background-color: var(--primary-hover-color);
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn:active {
             transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+            }
+        }
+
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .social-btn i {
+            margin-right: 8px;
+        }
+
+        .social-btn.google {
+            color: #DB4437;
+        }
+
+        .social-btn.github {
+            color: #333;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-btn.google:hover {
+            background: #fce8e6;
+            border-color: #DB4437;
+        }
+
+        .social-btn.github:hover {
+            background: #f0f0f0;
+            border-color: #333;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #777;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        .success-message {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #FF0000;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .back-link a i {
+            margin-right: 5px;
+        }
+
+        .saved-accounts {
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .saved-accounts-header {
+            background: #f0f0f0;
+            padding: 10px 15px;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .saved-accounts-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .saved-account {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+        }
+
+        .saved-account:hover {
+            background: #f9f9f9;
+        }
+
+        .saved-account:last-child {
+            border-bottom: none;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .account-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8B0000 0%, #FF0000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .remove-account {
+            color: #FF0000;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+
+        .remove-account:hover {
+            background: #ffe6e6;
+        }
+
+        .form-group input {
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .form-group input:focus {
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                flex-direction: column;
+                height: auto;
+                max-width: 600px;
+            }
+            
+            .brand-section, .form-section {
+                padding: 30px;
+            }
+            
+            .brand-section {
+                padding: 40px 30px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div id="authContainer" class="auth-container">
-        <div class="auth-header">
-            <i class="fas fa-lock lock-icon"></i>
-            <h1 class="header-title" id="formTitle">Registrar-se</h1>
+    <div class="app-container">
+        <div class="brand-section">
+            <div class="brand-content">
+                <div class="brand-logo">
+                    <i class="meteor-icon" data-lucide="meteor"></i>
+                    Voxy Hub
+                </div>
+                <div class="brand-tagline">Melhor Executor e Hub Brasileiro!</div>
+            </div>
         </div>
         
-        <div id="registerFormContainer">
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="username">*Como irão te chamar?</label>
-                    <div class="input-container">
-                        <input type="text" id="regUsername" name="username" required>
-                    </div>
+        <div class="form-section">
+            <div class="form-container">
+                <div class="form-toggle">
+                    <button class="toggle-btn active" id="loginToggle">Login</button>
+                    <button class="toggle-btn" id="registerToggle">Registro</button>
                 </div>
-                <div class="form-group">
-                    <label for="email">*@gmail.com</label>
-                    <div class="input-container">
-                        <input type="email" id="regEmail" name="email" required>
+                
+                <!-- Formulário de Login -->
+                <form class="form active" id="loginForm">
+                    <h2 class="form-title">Entre na sua conta</h2>
+                    <p class="form-subtitle">Acesse o Voxy Hub com suas credenciais</p>
+                    
+                    <div class="success-message" id="loginSuccessMessage">
+                        Login realizado com sucesso!
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="password">*Crie uma senha.</label>
-                    <div class="input-container">
-                        <input type="password" id="regPassword" name="password" required>
-                        <i class="fas fa-eye-slash password-toggle" id="regTogglePassword"></i>
+                    
+                    <!-- Contas salvas -->
+                    <div class="saved-accounts" id="savedAccounts">
+                        <div class="saved-accounts-header">
+                            <span>Contas salvas</span>
+                            <i data-lucide="chevron-down" id="toggleAccounts"></i>
+                        </div>
+                        <div class="saved-accounts-list" id="savedAccountsList">
+                            <!-- As contas salvas serão carregadas aqui -->
+                        </div>
                     </div>
-                </div>
-                <button type="submit" class="auth-button">Registrar</button>
-            </form>
-            <p class="switch-link">Já tem uma conta? <a id="showLoginLink">Login</a></p>
-        </div>
-        
-        <div id="loginFormContainer" style="display: none;">
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">*Seu nome.</label>
-                    <div class="input-container">
-                        <input type="text" id="logUsername" name="username" required>
+                    
+                    <div class="form-group" id="loginEmailGroup">
+                        <label for="loginEmail">E-mail</label>
+                        <div class="input-with-icon">
+                            <i class="icon" data-lucide="mail"></i>
+                            <input type="email" id="loginEmail" name="loginEmail" placeholder="Digite seu e-mail">
+                        </div>
+                        <div class="error" id="loginEmailError">Por favor, insira um e-mail válido</div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="password">*Sua senha.</label>
-                    <div class="input-container">
-                        <input type="password" id="logPassword" name="password" required>
-                        <i class="fas fa-eye-slash password-toggle" id="logTogglePassword"></i>
+                    
+                    <div class="form-group" id="loginPasswordGroup">
+                        <label for="loginPassword">Senha</label>
+                        <div class="input-with-icon">
+                            <i class="icon" data-lucide="lock"></i>
+                            <input type="password" id="loginPassword" name="loginPassword" placeholder="Digite sua senha">
+                            <span class="password-toggle" id="loginPasswordToggle">
+                                <i data-lucide="eye"></i>
+                            </span>
+                        </div>
+                        <div class="error" id="loginPasswordError">A senha deve ter pelo menos 6 caracteres</div>
                     </div>
-                </div>
-                <button type="submit" class="auth-button">Login</button>
-            </form>
-            <p class="switch-link">Não tem uma conta? <a id="showRegisterLink">Registrar</a></p>
+                    
+                    <button type="submit" class="btn btn-pulse">
+                        <i data-lucide="log-in"></i> Entrar
+                    </button>
+                    
+                    <div class="divider">
+                        <span>Ou continue com</span>
+                    </div>
+                    
+                    <div class="social-login">
+                        <button type="button" class="social-btn google">
+                            <i data-lucide="mail"></i> Google
+                        </button>
+                        <button type="button" class="social-btn github">
+                            <i data-lucide="github"></i> GitHub
+                        </button>
+                    </div>
+                    
+                    <div class="back-link">
+                        <a href="#" id="forgotPasswordLink">
+                            <i data-lucide="key"></i> Esqueceu sua senha?
+                        </a>
+                    </div>
+                </form>
+                
+                <!-- Formulário de Registro -->
+                <form class="form" id="registerForm">
+                    <h2 class="form-title">Crie sua conta</h2>
+                    <p class="form-subtitle">Junte-se ao Voxy Hub em poucos passos</p>
+                    
+                    <div class="success-message" id="registerSuccessMessage">
+                        Registro realizado com sucesso!
+                    </div>
+                    
+                    <div class="form-group" id="nameGroup">
+                        <label for="name">Nome</label>
+                        <div class="input-with-icon">
+                            <i class="icon" data-lucide="user"></i>
+                            <input type="text" id="name" name="name" placeholder="Como as pessoas irão te chamar?">
+                        </div>
+                        <div class="error" id="nameError">Por favor, insira um nome válido (mínimo 2 caracteres)</div>
+                    </div>
+                    
+                    <div class="form-group" id="emailGroup">
+                        <label for="email">E-mail</label>
+                        <div class="input-with-icon">
+                            <i class="icon" data-lucide="mail"></i>
+                            <input type="email" id="email" name="email" placeholder="Digite seu e-mail">
+                        </div>
+                        <div class="error" id="emailError">Por favor, insira um e-mail válido</div>
+                    </div>
+                    
+                    <div class="form-group" id="passwordGroup">
+                        <label for="password">Senha</label>
+                        <div class="input-with-icon">
+                            <i class="icon" data-lucide="lock"></i>
+                            <input type="password" id="password" name="password" placeholder="Digite sua senha">
+                            <span class="password-toggle" id="passwordToggle">
+                                <i data-lucide="eye"></i>
+                            </span>
+                        </div>
+                        <div class="error" id="passwordError">A senha deve ter pelo menos 6 caracteres</div>
+                    </div>
+                    
+                    <div class="captcha-container">
+                        <p>Verificação de segurança</p>
+                        <div class="captcha-text" id="captchaText">A1B2C3</div>
+                        <input type="text" class="captcha-input" id="captchaInput" placeholder="Digite o código acima">
+                        <div class="error" id="captchaError" style="display: none; margin-top: 10px;">Código de verificação incorreto</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-pulse">
+                        <i data-lucide="user-plus"></i> Registrar
+                    </button>
+                    
+                    <div class="divider">
+                        <span>Ou cadastre-se com</span>
+                    </div>
+                    
+                    <div class="social-login">
+                        <button type="button" class="social-btn google">
+                            <i data-lucide="mail"></i> Google
+                        </button>
+                        <button type="button" class="social-btn github">
+                            <i data-lucide="github"></i> GitHub
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Formulário de Recuperação de Senha -->
+                <form class="form" id="forgotPasswordForm">
+                    <h2 class="form-title">Recuperar Senha</h2>
+                    <p class="form-subtitle">Digite seu e-mail para receber instruções de recuperação</p>
+                    
+                    <div class="success-message" id="forgotPasswordSuccessMessage">
+                        E-mail de recuperação enviado com sucesso!
+                    </div>
+                    
+                    <div class="form-group" id="forgotEmailGroup">
+                        <label for="forgotEmail">E-mail</label>
+                        <div class="input-with-icon">
+                            <i class="icon" data-lucide="mail"></i>
+                            <input type="email" id="forgotEmail" name="forgotEmail" placeholder="Digite seu e-mail cadastrado">
+                        </div>
+                        <div class="error" id="forgotEmailError">Por favor, insira um e-mail válido</div>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i data-lucide="send"></i> Enviar Instruções
+                    </button>
+                    
+                    <div class="back-link">
+                        <a href="#" id="backToLogin">
+                            <i data-lucide="arrow-left"></i> Voltar para o login
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    
-    <div id="dashboardContainer" class="dashboard-container" style="display: none;">
-        <!-- Header do Dashboard -->
-        <header class="dashboard-header">
-            <div class="logo">Voxy Hub</div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active">
-                    <i class="fas fa-code"></i> Scripts
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-shield-alt"></i> Executores
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-video"></i> Tutoriais
-                </a>
-            </nav>
-            <div class="user-controls">
-                <i class="fas fa-user-circle user-icon"></i>
-                <i class="fas fa-moon toggle-icon" id="themeToggle"></i>
-            </div>
-        </header>
 
-        <!-- Conteúdo Principal do Dashboard -->
-        <main class="dashboard-content">
-            <h2 class="content-section-title">Scripts</h2>
-            <div class="card-grid">
-                <!-- Exemplo de Card de Script -->
-                <div class="card">
-                    <img src="https://placehold.co/400x250/333333/ffffff?text=Script+Image" alt="Imagem do Script" class="card-image">
-                    <div class="card-body">
-                        <h3 class="card-title">Velas Mortas</h3>
-                        <div class="card-status">
-                            <span class="status-dot"></span>
-                            Working
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="card-button">Ver Detalhes <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-                <!-- Outros Cards de Exemplo -->
-                <div class="card">
-                    <img src="https://placehold.co/400x250/333333/ffffff?text=Script+Image+2" alt="Imagem do Script" class="card-image">
-                    <div class="card-body">
-                        <h3 class="card-title">Outro Script</h3>
-                        <div class="card-status">
-                            <span class="status-dot"></span>
-                            Working
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="card-button">Ver Detalhes <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-                <div class="card">
-                    <img src="https://placehold.co/400x250/333333/ffffff?text=Script+Image+3" alt="Imagem do Script" class="card-image">
-                    <div class="card-body">
-                        <h3 class="card-title">Script Fantástico</h3>
-                        <div class="card-status">
-                            <span class="status-dot"></span>
-                            Working
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="card-button">Ver Detalhes <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Assegura que as variáveis globais do ambiente estão disponíveis
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Inicializa o Firebase, Firestore e Auth
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Define a coleção de usuários
-        const usersCol = collection(db, `artifacts/${appId}/public/data/users`);
-
-        // Função de login anônimo ou com token
-        async function signIn() {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    console.log("Login com token inicial bem-sucedido.");
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar ícones Lucide
+            lucide.createIcons();
+            
+            // Elementos do DOM
+            const loginToggle = document.getElementById('loginToggle');
+            const registerToggle = document.getElementById('registerToggle');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const backToLogin = document.getElementById('backToLogin');
+            const savedAccounts = document.getElementById('savedAccounts');
+            const savedAccountsList = document.getElementById('savedAccountsList');
+            const toggleAccounts = document.getElementById('toggleAccounts');
+            
+            // Sistema de contas salvas
+            let savedAccountsData = JSON.parse(localStorage.getItem('voxyHubAccounts')) || [];
+            
+            // Função para salvar conta
+            function saveAccount(email, name) {
+                // Verificar se a conta já existe
+                const existingAccountIndex = savedAccountsData.findIndex(acc => acc.email === email);
+                
+                if (existingAccountIndex !== -1) {
+                    // Atualizar conta existente
+                    savedAccountsData[existingAccountIndex].name = name;
+                    savedAccountsData[existingAccountIndex].lastLogin = new Date().toISOString();
                 } else {
-                    await signInAnonymously(auth);
-                    console.log("Login anônimo bem-sucedido.");
-                }
-            } catch (error) {
-                console.error("Erro no login:", error);
-            }
-        }
-        
-        // Inicializa o login
-        signIn();
-
-        // Lógica de manipulação de formulários
-        document.addEventListener('DOMContentLoaded', () => {
-            const authContainer = document.getElementById('authContainer');
-            const dashboardContainer = document.getElementById('dashboardContainer');
-            const registerFormContainer = document.getElementById('registerFormContainer');
-            const loginFormContainer = document.getElementById('loginFormContainer');
-            const formTitle = document.getElementById('formTitle');
-            const showLoginLink = document.getElementById('showLoginLink');
-            const showRegisterLink = document.getElementById('showRegisterLink');
-
-            const regForm = document.getElementById('registerForm');
-            const logForm = document.getElementById('loginForm');
-
-            // Lógica para alternar a exibição dos formulários
-            showLoginLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                registerFormContainer.style.display = 'none';
-                loginFormContainer.style.display = 'block';
-                formTitle.textContent = 'Login';
-            });
-
-            showRegisterLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                loginFormContainer.style.display = 'none';
-                registerFormContainer.style.display = 'block';
-                formTitle.textContent = 'Registrar-se';
-            });
-
-            // Lógica para alternar a visibilidade das senhas nos dois formulários
-            const togglePassword = (input, icon) => {
-                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                input.setAttribute('type', type);
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-            };
-
-            document.getElementById('regTogglePassword').addEventListener('click', () => {
-                const input = document.getElementById('regPassword');
-                const icon = document.getElementById('regTogglePassword');
-                togglePassword(input, icon);
-            });
-            document.getElementById('logTogglePassword').addEventListener('click', () => {
-                const input = document.getElementById('logPassword');
-                const icon = document.getElementById('logTogglePassword');
-                togglePassword(input, icon);
-            });
-
-            // Sistema de Mensagens (substituindo alert)
-            function showMessage(message, type) {
-                let messageBox = document.querySelector('.message-box');
-                if (!messageBox) {
-                    messageBox = document.createElement('div');
-                    messageBox.className = 'message-box';
-                    document.body.appendChild(messageBox);
+                    // Adicionar nova conta
+                    savedAccountsData.push({
+                        email: email,
+                        name: name,
+                        lastLogin: new Date().toISOString(),
+                        avatar: name.charAt(0).toUpperCase()
+                    });
                 }
                 
-                messageBox.textContent = message;
-                messageBox.className = 'message-box ' + type;
-                messageBox.style.display = 'block';
-
-                setTimeout(() => {
-                    messageBox.style.display = 'none';
-                }, 3000);
-            }
-
-            // Lista de palavras inadequadas para validação (em minúsculas)
-            const profanityList = [
-                // Português
-                'boceta', 'buceta', 'cuzão', 'cuzao', 'caralho', 'filhodaputa', 'foda', 'merda', 'puta', 'vagabunda',
-                // Inglês
-                'asshole', 'bitch', 'cock', 'cunt', 'dick', 'fuck', 'motherfucker', 'shit', 'whore', 'slut'
-            ];
-
-            // Função para validar o nome de usuário
-            function validateUsername(username) {
-                const lowerUsername = username.toLowerCase();
+                // Salvar no localStorage
+                localStorage.setItem('voxyHubAccounts', JSON.stringify(savedAccountsData));
                 
-                // Verifica se contém pontuação ou espaços
-                if (!/^[a-zA-Z0-9]+$/.test(lowerUsername)) {
-                    return 'O nome de usuário não pode conter espaços, pontuação ou caracteres especiais.';
-                }
-
-                // Verifica se contém palavras inadequadas
-                for (const word of profanityList) {
-                    if (lowerUsername.includes(word)) {
-                        return 'O nome de usuário contém uma palavra inapropriada.';
-                    }
-                }
-
-                return null; // Retorna null se for válido
+                // Atualizar a lista de contas salvas
+                updateSavedAccountsList();
             }
-
-            // Lógica de submissão do formulário de Registro
-            regForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('regUsername').value;
-                const email = document.getElementById('regEmail').value;
-                const password = document.getElementById('regPassword').value;
-
-                // Validação do nome de usuário
-                const usernameError = validateUsername(username);
-                if (usernameError) {
-                    showMessage(usernameError, 'error');
+            
+            // Função para remover conta salva
+            function removeSavedAccount(email) {
+                savedAccountsData = savedAccountsData.filter(acc => acc.email !== email);
+                localStorage.setItem('voxyHubAccounts', JSON.stringify(savedAccountsData));
+                updateSavedAccountsList();
+            }
+            
+            // Função para atualizar a lista de contas salvas
+            function updateSavedAccountsList() {
+                savedAccountsList.innerHTML = '';
+                
+                if (savedAccountsData.length === 0) {
+                    savedAccounts.style.display = 'none';
                     return;
                 }
-
-                if (!email.endsWith('@gmail.com')) {
-                    showMessage('O e-mail deve ser um endereço do Gmail (@gmail.com).', 'error');
-                    return;
-                }
-
-                if (username && email && password) {
-                    try {
-                        // Verifica se o nome de usuário ou e-mail já existem
-                        const q = query(usersCol, where("username", "==", username));
-                        const q2 = query(usersCol, where("email", "==", email));
-                        const [querySnapshot, querySnapshot2] = await Promise.all([getDocs(q), getDocs(q2)]);
-
-                        if (!querySnapshot.empty) {
-                            showMessage('Nome de usuário já existe!', 'error');
-                            return;
+                
+                savedAccounts.style.display = 'block';
+                
+                // Ordenar por último login (mais recente primeiro)
+                const sortedAccounts = [...savedAccountsData].sort((a, b) => 
+                    new Date(b.lastLogin) - new Date(a.lastLogin)
+                );
+                
+                sortedAccounts.forEach(account => {
+                    const accountElement = document.createElement('div');
+                    accountElement.className = 'saved-account';
+                    accountElement.innerHTML = `
+                        <div class="account-info">
+                            <div class="account-avatar">${account.avatar}</div>
+                            <div>
+                                <div style="font-weight: 600;">${account.name}</div>
+                                <div style="font-size: 12px; color: #777;">${account.email}</div>
+                            </div>
+                        </div>
+                        <div class="remove-account" data-email="${account.email}">
+                            <i data-lucide="x"></i>
+                        </div>
+                    `;
+                    
+                    // Adicionar evento de clique para preencher o formulário
+                    accountElement.addEventListener('click', (e) => {
+                        if (!e.target.closest('.remove-account')) {
+                            document.getElementById('loginEmail').value = account.email;
+                            document.getElementById('loginPassword').focus();
                         }
-
-                        if (!querySnapshot2.empty) {
-                            showMessage('E-mail já existe!', 'error');
-                            return;
-                        }
-
-                        // Adiciona o novo usuário ao Firestore
-                        await addDoc(usersCol, {
-                            username: username,
-                            email: email,
-                            password: password // NOTA: Em produção, você deve sempre usar senhas criptografadas.
-                        });
-
-                        showMessage('Registro bem-sucedido!', 'success');
-                        setTimeout(() => {
-                            authContainer.style.display = 'none';
-                            dashboardContainer.style.display = 'flex'; // Altera para o novo painel
-                        }, 1500);
-
-                    } catch (error) {
-                        console.error("Erro ao registrar:", error);
-                        showMessage('Erro ao registrar. Por favor, tente novamente.', 'error');
-                    }
+                    });
+                    
+                    savedAccountsList.appendChild(accountElement);
+                });
+                
+                // Adicionar eventos de remoção
+                document.querySelectorAll('.remove-account').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const email = btn.getAttribute('data-email');
+                        removeSavedAccount(email);
+                    });
+                });
+                
+                // Atualizar ícones
+                lucide.createIcons();
+            }
+            
+            // Alternar visibilidade da lista de contas salvas
+            toggleAccounts.addEventListener('click', function() {
+                const list = savedAccountsList;
+                const icon = toggleAccounts;
+                
+                if (list.style.display === 'none' || list.style.display === '') {
+                    list.style.display = 'block';
+                    icon.style.transform = 'rotate(180deg)';
                 } else {
-                    showMessage('Por favor, preencha todos os campos.', 'error');
+                    list.style.display = 'none';
+                    icon.style.transform = 'rotate(0deg)';
                 }
             });
-
-            // Lógica de submissão do formulário de Login
-            logForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('logUsername').value;
-                const password = document.getElementById('logPassword').value;
-
-                if (username && password) {
-                    try {
-                        // Busca o usuário no Firestore
-                        const q = query(usersCol, where("username", "==", username), where("password", "==", password));
-                        const querySnapshot = await getDocs(q);
-
-                        if (querySnapshot.empty) {
-                            showMessage('Nome de usuário ou senha incorretos.', 'error');
-                            return;
-                        }
-
-                        console.log('Login bem-sucedido!');
-                        showMessage('Login bem-sucedido!', 'success');
-                        setTimeout(() => {
-                            authContainer.style.display = 'none';
-                            dashboardContainer.style.display = 'flex'; // Altera para o novo painel
-                        }, 1500);
-
-                    } catch (error) {
-                        console.error("Erro ao fazer login:", error);
-                        showMessage('Erro ao fazer login. Por favor, tente novamente.', 'error');
-                    }
-                } else {
-                    showMessage('Por favor, preencha todos os campos.', 'error');
+            
+            // Inicializar a lista de contas salvas
+            updateSavedAccountsList();
+            
+            // Alternar entre formulários
+            function showForm(formToShow) {
+                // Esconder todos os formulários
+                loginForm.classList.remove('active');
+                registerForm.classList.remove('active');
+                forgotPasswordForm.classList.remove('active');
+                
+                // Remover active de todos os toggles
+                loginToggle.classList.remove('active');
+                registerToggle.classList.remove('active');
+                
+                // Mostrar o formulário selecionado
+                formToShow.classList.add('active');
+                
+                // Ativar o toggle correspondente (apenas para login/registro)
+                if (formToShow === loginForm) {
+                    loginToggle.classList.add('active');
+                } else if (formToShow === registerForm) {
+                    registerToggle.classList.add('active');
                 }
+            }
+            
+            loginToggle.addEventListener('click', () => showForm(loginForm));
+            registerToggle.addEventListener('click', () => showForm(registerForm));
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showForm(forgotPasswordForm);
+            });
+            backToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                showForm(loginForm);
+            });
+            
+            // Gerar CAPTCHA
+            function generateCaptcha() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let captcha = '';
+                for (let i = 0; i < 6; i++) {
+                    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                document.getElementById('captchaText').textContent = captcha;
+                return captcha;
+            }
+            
+            // Inicializar CAPTCHA
+            let currentCaptcha = generateCaptcha();
+            
+            // Toggle de visibilidade de senha
+            function setupPasswordToggle(passwordInputId, toggleButtonId) {
+                const passwordInput = document.getElementById(passwordInputId);
+                const toggleButton = document.getElementById(toggleButtonId);
+                
+                toggleButton.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggleButton.innerHTML = '<i data-lucide="eye-off"></i>';
+                        lucide.createIcons();
+                    } else {
+                        passwordInput.type = 'password';
+                        toggleButton.innerHTML = '<i data-lucide="eye"></i>';
+                        lucide.createIcons();
+                    }
+                });
+            }
+            
+            // Configurar toggles de senha
+            setupPasswordToggle('loginPassword', 'loginPasswordToggle');
+            setupPasswordToggle('password', 'passwordToggle');
+            
+            // Validação do formulário de login
+            const loginFormElement = document.getElementById('loginForm');
+            const loginEmailInput = document.getElementById('loginEmail');
+            const loginPasswordInput = document.getElementById('loginPassword');
+            const loginSuccessMessage = document.getElementById('loginSuccessMessage');
+            
+            const loginEmailGroup = document.getElementById('loginEmailGroup');
+            const loginPasswordGroup = document.getElementById('loginPasswordGroup');
+            
+            function validateLoginEmail() {
+                const email = loginEmailInput.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    loginEmailGroup.classList.add('error');
+                    return false;
+                } else {
+                    loginEmailGroup.classList.remove('error');
+                    loginEmailGroup.classList.add('success');
+                    return true;
+                }
+            }
+            
+            function validateLoginPassword() {
+                const password = loginPasswordInput.value;
+                
+                if (password.length < 6) {
+                    loginPasswordGroup.classList.add('error');
+                    return false;
+                } else {
+                    loginPasswordGroup.classList.remove('error');
+                    loginPasswordGroup.classList.add('success');
+                    return true;
+                }
+            }
+            
+            loginEmailInput.addEventListener('input', validateLoginEmail);
+            loginPasswordInput.addEventListener('input', validateLoginPassword);
+            
+            loginFormElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const isEmailValid = validateLoginEmail();
+                const isPasswordValid = validateLoginPassword();
+                
+                if (isEmailValid && isPasswordValid) {
+                    // Salvar automaticamente a conta
+                    const name = loginEmailInput.value.split('@')[0]; // Usar parte do email como nome
+                    saveAccount(loginEmailInput.value, name);
+                    
+                    // Simular login bem-sucedido
+                    loginSuccessMessage.style.display = 'block';
+                    
+                    setTimeout(function() {
+                        loginSuccessMessage.style.display = 'none';
+                        loginFormElement.reset();
+                        loginEmailGroup.classList.remove('success');
+                        loginPasswordGroup.classList.remove('success');
+                    }, 3000);
+                }
+            });
+            
+            // Validação do formulário de registro
+            const registerFormElement = document.getElementById('registerForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const captchaInput = document.getElementById('captchaInput');
+            const registerSuccessMessage = document.getElementById('registerSuccessMessage');
+            
+            const nameGroup = document.getElementById('nameGroup');
+            const emailGroup = document.getElementById('emailGroup');
+            const passwordGroup = document.getElementById('passwordGroup');
+            const captchaError = document.getElementById('captchaError');
+            
+            function validateName() {
+                const name = nameInput.value.trim();
+                if (name.length < 2) {
+                    nameGroup.classList.add('error');
+                    return false;
+                } else {
+                    nameGroup.classList.remove('error');
+                    nameGroup.classList.add('success');
+                    return true;
+                }
+            }
+            
+            function validateEmail() {
+                const email = emailInput.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    emailGroup.classList.add('error');
+                    return false;
+                } else {
+                    emailGroup.classList.remove('error');
+                    emailGroup.classList.add('success');
+                    return true;
+                }
+            }
+            
+            function validatePassword() {
+                const password = passwordInput.value;
+                
+                if (password.length < 6) {
+                    passwordGroup.classList.add('error');
+                    return false;
+                } else {
+                    passwordGroup.classList.remove('error');
+                    passwordGroup.classList.add('success');
+                    return true;
+                }
+            }
+            
+            function validateCaptcha() {
+                if (captchaInput.value !== currentCaptcha) {
+                    captchaError.style.display = 'block';
+                    return false;
+                } else {
+                    captchaError.style.display = 'none';
+                    return true;
+                }
+            }
+            
+            nameInput.addEventListener('input', validateName);
+            emailInput.addEventListener('input', validateEmail);
+            passwordInput.addEventListener('input', validatePassword);
+            captchaInput.addEventListener('input', validateCaptcha);
+            
+            registerFormElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const isNameValid = validateName();
+                const isEmailValid = validateEmail();
+                const isPasswordValid = validatePassword();
+                const isCaptchaValid = validateCaptcha();
+                
+                if (isNameValid && isEmailValid && isPasswordValid && isCaptchaValid) {
+                    // Salvar automaticamente a conta
+                    saveAccount(emailInput.value, nameInput.value);
+                    
+                    // Simular registro bem-sucedido
+                    registerSuccessMessage.style.display = 'block';
+                    
+                    setTimeout(function() {
+                        registerSuccessMessage.style.display = 'none';
+                        registerFormElement.reset();
+                        nameGroup.classList.remove('success');
+                        emailGroup.classList.remove('success');
+                        passwordGroup.classList.remove('success');
+                        currentCaptcha = generateCaptcha();
+                    }, 3000);
+                }
+            });
+            
+            // Validação do formulário de recuperação de senha
+            const forgotPasswordFormElement = document.getElementById('forgotPasswordForm');
+            const forgotEmailInput = document.getElementById('forgotEmail');
+            const forgotPasswordSuccessMessage = document.getElementById('forgotPasswordSuccessMessage');
+            const forgotEmailGroup = document.getElementById('forgotEmailGroup');
+            
+            function validateForgotEmail() {
+                const email = forgotEmailInput.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    forgotEmailGroup.classList.add('error');
+                    return false;
+                } else {
+                    forgotEmailGroup.classList.remove('error');
+                    forgotEmailGroup.classList.add('success');
+                    return true;
+                }
+            }
+            
+            forgotEmailInput.addEventListener('input', validateForgotEmail);
+            
+            forgotPasswordFormElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const isEmailValid = validateForgotEmail();
+                
+                if (isEmailValid) {
+                    // Simular envio de e-mail de recuperação
+                    forgotPasswordSuccessMessage.style.display = 'block';
+                    
+                    setTimeout(function() {
+                        forgotPasswordSuccessMessage.style.display = 'none';
+                        forgotPasswordFormElement.reset();
+                        forgotEmailGroup.classList.remove('success');
+                        showForm(loginForm);
+                    }, 3000);
+                }
+            });
+            
+            // Login social (simulação)
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const provider = this.classList.contains('google') ? 'Google' : 'GitHub';
+                    alert(`Redirecionando para autenticação com ${provider}. Em uma implementação real, isso integraria com OAuth.`);
+                });
             });
         });
     </script>
